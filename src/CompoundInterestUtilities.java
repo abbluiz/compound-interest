@@ -1,20 +1,18 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-public class CompoundInterestUtilities {
+class CompoundInterestUtilities {
 
-    // Round numbers
-    public static double round(double value, int decimalPlaces) {
-
-        if (decimalPlaces < 0) throw new IllegalArgumentException();
+    // Round numbers to 2 decimal values
+    static double round(double value) {
 
         BigDecimal bd = new BigDecimal(Double.toString(value));
-        bd = bd.setScale(decimalPlaces, RoundingMode.HALF_UP);
+        bd = bd.setScale(2, RoundingMode.HALF_UP);
         return bd.doubleValue();
 
     }
 
-    public static String interestRateTerminology(String rateUnit) {
+    static String interestRateTerminology(String rateUnit) {
 
         switch(rateUnit) {
 
@@ -23,7 +21,7 @@ public class CompoundInterestUtilities {
             case "months":
                 return "per month";
             case "years":
-                return "per year";
+                return "per annum";
             default:
                 return "n/a";
 

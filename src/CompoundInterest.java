@@ -2,119 +2,99 @@ public class CompoundInterest {
 
     private double principal;
     private double rate;
-    private String rateType;
+    private String rateUnit;
     private double compoundingFrequency;
     private String compoundingFrequencyUnit;
     private double term;
     private String termUnit;
 
-    // This constants specify the conversion between time units used in simple interest calculations
+    // This constants specify the conversion between time units
     private static final double DAYS_IN_A_MONTH = 30.0;
     private static final double DAYS_IN_A_YEAR = 365.0;
     private static final double MONTHS_IN_A_YEAR = 12.0;
 
-    public CompoundInterest () {}
-
-    public CompoundInterest (double principal, double rate, String rateType,
-                             double compoundingFrequency, String compoundingFrequencyUnit,
-                             double term, String termUnit) {
+    // Constructor if user chooses to calculate future value
+    CompoundInterest(double principal, double rate, String rateUnit,
+                     double compoundingFrequency, String compoundingFrequencyUnit,
+                     double term, String termUnit) {
 
         this.principal = principal;
         this.rate = rate;
-        this.rateType = rateType;
+        this.rateUnit = rateUnit;
         this.compoundingFrequency = compoundingFrequency;
         this.compoundingFrequencyUnit = compoundingFrequencyUnit;
         this.term = term;
         this.termUnit = termUnit;
 
-        this.setRateType(rateType); // Use setter to validate some values
+        this.setRateUnit(rateUnit); // Use setter to validate some values
 
     }
 
-    public CompoundInterest (double principal, double rate, String rateType,
-                             double compoundingFrequency, String compoundingFrequencyUnit,
-                             double term, String termUnit, double futureValue) {
+    // Constructor if user chooses to calculate present value
+    CompoundInterest(double principal, double rate, String rateUnit,
+                     double compoundingFrequency, String compoundingFrequencyUnit,
+                     double term, String termUnit, double futureValue) {
 
         this.principal = principal;
         this.rate = rate;
-        this.rateType = rateType;
+        this.rateUnit = rateUnit;
         this.compoundingFrequency = compoundingFrequency;
         this.compoundingFrequencyUnit = compoundingFrequencyUnit;
         this.term = term;
         this.termUnit = termUnit;
 
-        this.setRateType(rateType); // Use setter to validate some values
+        this.setRateUnit(rateUnit); // Use setter to validate some values
         this.setPrincipal(this.calculatePresentValue(futureValue));
 
     }
 
-    public double getPrincipal() { return principal; }
+    double getPrincipal() { return this.principal; }
 
-    public double getRate() { return rate; }
+    private void setPrincipal(double principal) { this.principal = principal; }
 
-    public String getRateType() { return rateType; }
-
-    public double getCompoundingFrequency() { return compoundingFrequency; }
-
-    public String getCompoundingFrequencyUnit() { return compoundingFrequencyUnit; }
-
-    public double getTerm() { return term; }
-
-    public String getTermUnit() { return termUnit; }
-
-    public void setPrincipal(double principal) { this.principal = principal; }
-
-    public void setRate(double rate) { this.rate = rate; }
-
-    public void setRateType(String rateType) {
+    private void setRateUnit(String rateType) {
 
         /* Change "daily" to "days", "monthly" to "months, and "yearly" to "years"
-         * This will make it easy to convert units later on */
+         * This will make it easy to convert units */
         switch (rateType) {
-            case "daily":
-                this.rateType = "days";
+            case "day":
+                this.rateUnit = "days";
                 break;
-            case "monthly":
-                this.rateType = "months";
+            case "month":
+                this.rateUnit = "months";
                 break;
-            case "yearly":
-                this.rateType = "years";
+            case "annum":
+                this.rateUnit = "years";
                 break;
         }
 
     }
 
-    public void setCompoundingFrequency(double compoundingFrequency) { this.compoundingFrequency = compoundingFrequency; }
+    // Converts a unit to whatever the rate unit is
+    private double convertTimeToRateUnit(String unit, double value) {
 
-    public void setCompoundingFrequencyUnit(String compoundingFrequencyUnit) { this.compoundingFrequencyUnit = compoundingFrequencyUnit; }
-
-    public void setTerm(double term) { this.term = term; }
-
-    public void setTermUnit(String termUnit) { this.termUnit = termUnit; }
-
-    public double convertTimeToRateUnit(String unit, double value) {
-
-        if (this.rateType.equals(unit)) // Checks if the units are already compatible; if so returns the term as is
+        if (this.rateUnit.equals(unit)) // Checks if the units are already compatible; if so returns the result as is
             return value;
-        else if (this.rateType.equals("days") && unit.equals("months"))
+        else if (this.rateUnit.equals("days") && unit.equals("months"))
             return (value * DAYS_IN_A_MONTH); // Return conversion from months to days
-        else if (this.rateType.equals("days") && unit.equals("years"))
+        else if (this.rateUnit.equals("days") && unit.equals("years"))
             return (value * DAYS_IN_A_YEAR); // Return conversion from years to days
-        else if (this.rateType.equals("months") && unit.equals("days"))
+        else if (this.rateUnit.equals("months") && unit.equals("days"))
             return (value / DAYS_IN_A_MONTH); // Return conversion from days to months
-        else if (this.rateType.equals("months") && unit.equals("years"))
+        else if (this.rateUnit.equals("months") && unit.equals("years"))
             return (value * MONTHS_IN_A_YEAR); // Return conversion from years to months
-        else if (this.rateType.equals("years") && unit.equals("days"))
+        else if (this.rateUnit.equals("years") && unit.equals("days"))
             return (value / DAYS_IN_A_YEAR); // Return conversion from days to years
-        else if (this.rateType.equals("years") && unit.equals("months"))
+        else if (this.rateUnit.equals("years") && unit.equals("months"))
             return (value / MONTHS_IN_A_YEAR); // Return conversion from months to years
 
         return 0.0;
     }
 
-    public double convertTimeToCompoundingFrequencyUnit(String unit, double value) {
+    // Converts a unit to whatever the compounding frequency unit is
+    private double convertTimeToCompoundingFrequencyUnit(String unit, double value) {
 
-        if (this.compoundingFrequencyUnit.equals(unit)) // Checks if the units are already compatible; if so returns the term as is
+        if (this.compoundingFrequencyUnit.equals(unit)) // Checks if the units are already compatible; if so returns the result as is
             return value;
         else if (this.compoundingFrequencyUnit.equals("days") && unit.equals("months"))
             return (value * DAYS_IN_A_MONTH); // Return conversion from months to days
@@ -133,57 +113,48 @@ public class CompoundInterest {
 
     }
 
-    /* This method will convert the term unit to whatever rate type is being used and return the converted result.
-     * EXAMPLE: if it is a monthly interest rate and the term unit is days, this method will return the original term
-     * value divided by the number of days in a month. */
-    private double convertTermToRateTypeUnit() {
+    // i = j / m
+    private double calculatePeriodicRate() { return (this.rate / this.calculateCompoundingPeriodsPerRateUnit()); }
 
-        return this.convertTimeToRateUnit(this.termUnit, this.term);
+    // m = (number of compounding frequency units there is in a rate unit) / compounding frequency
+    private double calculateCompoundingPeriodsPerRateUnit() {
 
-    }
-
-    public double calculatePeriodicRate() { // i
-
-        return (this.rate / this.calculateCompoundingPeriodsPerRateUnit());
+        return (this.convertTimeToCompoundingFrequencyUnit(this.rateUnit, 1) / this.compoundingFrequency);
 
     }
 
-    public double calculateCompoundingPeriodsPerRateUnit() { // m
+    // n = term * m
+    private double calculateCompoundingPeriodsInTerm() {
 
-        return (this.convertTimeToCompoundingFrequencyUnit(this.rateType, 1) / this.compoundingFrequency);
-
-    }
-
-    public double calculateCompoundingPeriodsInTerm() { // n
-
-        return (this.convertTermToRateTypeUnit() * this.calculateCompoundingPeriodsPerRateUnit());
+        return (this.convertTimeToRateUnit(this.termUnit, this.term) * this.calculateCompoundingPeriodsPerRateUnit());
 
     }
 
-    public double calculateFutureValue() {
+    double calculateFutureValue() {
 
-        double periodicRate = this.calculatePeriodicRate() / 100.0;
-        double compoundingPeriodsInTerm = this.calculateCompoundingPeriodsInTerm();
+        double periodicRate = this.calculatePeriodicRate() / 100.0; // i
+        double compoundingPeriodsInTerm = this.calculateCompoundingPeriodsInTerm(); // n
 
-        return (this.principal * Math.pow((1 + periodicRate), compoundingPeriodsInTerm));
+        return (this.principal * Math.pow((1 + periodicRate), compoundingPeriodsInTerm)); // F = P (1 + i)^n
 
     }
 
-    public double calculatePresentValue(double futureValue) {
+    private double calculatePresentValue(double futureValue) {
 
-        double periodicRate = this.calculatePeriodicRate() / 100.0;
-        double compoundingPeriodsInTerm = this.calculateCompoundingPeriodsInTerm();
+        double periodicRate = this.calculatePeriodicRate() / 100.0; // i
+        double compoundingPeriodsInTerm = this.calculateCompoundingPeriodsInTerm(); // n
 
-        return (futureValue / Math.pow((1 + periodicRate), compoundingPeriodsInTerm));
+        return (futureValue / Math.pow((1 + periodicRate), compoundingPeriodsInTerm)); // P = F / (1 + i)^n
 
     }
 
     @Override
     public String toString() {
 
-        return "Principal: $" + CompoundInterestUtilities.round(this.principal,2) + "\n" +
-                "Interest rate: " + this.rate + "% " + CompoundInterestUtilities.interestRateTerminology(this.rateType) + "\n" +
-                "Term: " + this.term + " " + this.termUnit;
+        return "Principal: $" + CompoundInterestUtilities.round(this.principal) + "\n" +
+                "Interest rate: " + this.rate + "% " + CompoundInterestUtilities.interestRateTerminology(this.rateUnit) + "\n" +
+                "Compounded every " + CompoundInterestUtilities.round(this.compoundingFrequency) + " " + this.compoundingFrequencyUnit + "\n" +
+                "Term: " + CompoundInterestUtilities.round(this.term) + " " + this.termUnit;
 
     }
 
